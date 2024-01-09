@@ -3,7 +3,7 @@ using RunningLog.Models;
 
 namespace RunningLog.Repositories;
 
-public class InMemActivitiesRepository
+public class InMemActivitiesRepository : IActivitiesRepository
 {
     private readonly List<Activity> _activities = new()
     {
