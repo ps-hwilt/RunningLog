@@ -1,12 +1,12 @@
 namespace RunningLog.DTO;
 
-public class ActivityDTO
+public record ActivityDTO
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     
     public string Time { get; set; }
     
-    public string Distance { get; set; }
+    public decimal Distance { get; set; }
     
     public DateTime StartTime { get; set; }
     

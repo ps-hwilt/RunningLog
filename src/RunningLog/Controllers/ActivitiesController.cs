@@ -18,6 +18,7 @@ public class ActivitiesController : ControllerBase
 
     }
     
+    // Put api/activity/
     [HttpGet]
     public IEnumerable<ActivityDTO> GetItems()
     {
@@ -25,8 +26,9 @@ public class ActivitiesController : ControllerBase
         return activites;
     }
 
-    [HttpGet("{id}")]
-    public ActionResult<ActivityDTO> GetActivity(int id)
+    // get api/activity/{id}
+    [HttpGet("{id:guid}")]
+    public ActionResult<ActivityDTO> GetActivity(Guid id)
     {
         var activity = _repository.GetActivity(id);
 
@@ -35,5 +37,59 @@ public class ActivitiesController : ControllerBase
             return NotFound();
         }
         return Ok(activity.AsDTO());
+    }
+
+    // Post api/activity/{id}
+    [HttpPost]
+    public ActionResult<ActivityDTO> CreateItem(CreateActivityDTO activityDto)
+    {
+        Activity activity = new()
+        {
+            Id = Guid.NewGuid(),
+            Distance = activityDto.Distance,
+            Time = activityDto.Time,
+            StartTime = DateTime.UtcNow
+        };
+        
+        _repository.CreateActivity(activity);
+
+        return CreatedAtAction(nameof(GetActivity), new { id = activity.Id }, activity.AsDTO());
+    }
+    
+    // Put api/activity/{id}
+    [HttpPut("{id:guid}")]
+    public ActionResult UpdateActivity(Guid id, UpdateActivityDTO activityDto)
+    {
+        var existingActivity = _repository.GetActivity(id);
+
+        if (existingActivity is null)
+        {
+            return NotFound();
+        }
+
+        var updatedActivity = existingActivity with
+        {
+            Distance = activityDto.Distance,
+            Time = activityDto.Time
+        };
+        
+        _repository.UpdateActivity(updatedActivity);
+        
+        return NoContent();
+    }
+
+    [HttpDelete("{id:guid}")]
+    public ActionResult DeleteActivity(Guid id)
+    {
+        var existingActivity = _repository.GetActivity(id);
+
+        if (existingActivity is null)
+        {
+            return NotFound();
+        }
+        
+        _repository.DeleteActivity(id);
+
+        return NoContent();
     }
 }
