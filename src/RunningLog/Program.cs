@@ -1,4 +1,9 @@
 using Microsoft.OpenApi.Models;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
+using MongoDB.Driver;
+using RunningLog.Options;
 using RunningLog.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,7 +14,14 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "Running Log", Version = "v1"}));
-builder.Services.AddSingleton<IActivitiesRepository, InMemActivitiesRepository>();
+
+BsonSerializer.RegisterSerializer(new GuidSerializer(BsonType.String));
+BsonSerializer.RegisterSerializer(new DateTimeSerializer(BsonType.DateTime));
+
+builder.Services.Configure<MongoDbSettings>(
+    builder.Configuration.GetSection("MongoDbSettings"));
+
+builder.Services.AddSingleton<IActivitiesRepository, MongoDbActivitiesRepository>();
 
 var app = builder.Build();
 
