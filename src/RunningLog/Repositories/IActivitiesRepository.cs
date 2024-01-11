@@ -4,12 +4,12 @@ namespace RunningLog.Repositories;
 
 public interface IActivitiesRepository
 {
-    IEnumerable<Activity> GetActivities();
-    Activity GetActivity(Guid id);
+    Task<IEnumerable<Activity>> GetActivitiesAsync();
+    Task<Activity> GetActivityAsync(Guid id);
 
-    void CreateActivity(Activity activity);
+    Task CreateActivityAsync(Activity activity);
 
-    void UpdateActivity(Activity activity);
+    Task UpdateActivityAsync(Activity activity);
 
-    void DeleteActivity(Guid id);
+    Task DeleteActivityAsync(Guid id);
 }

@@ -27,31 +27,31 @@ public class MongoDbActivitiesRepository : IActivitiesRepository
 
     }
     
-    public IEnumerable<Activity> GetActivities()
+    public async Task<IEnumerable<Activity>> GetActivitiesAsync()
     {
-        return _activitiesCollection.Find(new BsonDocument()).ToList();
+        return await _activitiesCollection.Find(new BsonDocument()).ToListAsync();
     }
 
-    public Activity GetActivity(Guid id)
+    public async Task<Activity> GetActivityAsync(Guid id)
     {
         var filter = _filterBuilder.Eq(activity => activity.Id, id);
-        return _activitiesCollection.Find(filter).SingleOrDefault();
+        return await _activitiesCollection.Find(filter).SingleOrDefaultAsync();
     }
 
-    public void CreateActivity(Activity activity)
+    public async Task CreateActivityAsync(Activity activity)
     {
-        _activitiesCollection.InsertOne(activity);
+        await _activitiesCollection.InsertOneAsync(activity);
     }
 
-    public void UpdateActivity(Activity activity)
+    public async Task UpdateActivityAsync(Activity activity)
     {
         var filter = _filterBuilder.Eq(existingActivity => existingActivity.Id, activity.Id);
-        _activitiesCollection.ReplaceOne(filter, activity);
+        await _activitiesCollection.ReplaceOneAsync(filter, activity);
     }
 
-    public void DeleteActivity(Guid id)
+    public async Task DeleteActivityAsync(Guid id)
     {
         var filter = _filterBuilder.Eq(activity => activity.Id, id);
-        _activitiesCollection.DeleteOne(filter);
+        await _activitiesCollection.DeleteOneAsync(filter);
     }
 }

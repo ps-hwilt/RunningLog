@@ -20,17 +20,18 @@ public class ActivitiesController : ControllerBase
     
     // Put api/activity/
     [HttpGet]
-    public IEnumerable<ActivityDTO> GetItems()
+    public async Task<IEnumerable<ActivityDTO>> GetActivitiesAsync()
     {
-        var activites = _repository.GetActivities().Select(activity => activity.AsDTO());
+        var activites = (await _repository.GetActivitiesAsync())
+            .Select(activity => activity.AsDTO());
         return activites;
     }
 
     // get api/activity/{id}
     [HttpGet("{id:guid}")]
-    public ActionResult<ActivityDTO> GetActivity(Guid id)
+    public async Task<ActionResult<ActivityDTO>> GetActivityAsync(Guid id)
     {
-        var activity = _repository.GetActivity(id);
+        var activity = await _repository.GetActivityAsync(id);
 
         if (activity is null)
         {
@@ -41,7 +42,7 @@ public class ActivitiesController : ControllerBase
 
     // Post api/activity/{id}
     [HttpPost]
-    public ActionResult<ActivityDTO> CreateItem(CreateActivityDTO activityDto)
+    public async Task<ActionResult<ActivityDTO>> CreateActivityAsync(CreateActivityDTO activityDto)
     {
         Activity activity = new()
         {
@@ -51,16 +52,16 @@ public class ActivitiesController : ControllerBase
             StartTime = DateTime.UtcNow
         };
         
-        _repository.CreateActivity(activity);
+        await _repository.CreateActivityAsync(activity);
 
-        return CreatedAtAction(nameof(GetActivity), new { id = activity.Id }, activity.AsDTO());
+        return CreatedAtAction(nameof(GetActivityAsync), new { id = activity.Id }, activity.AsDTO());
     }
     
     // Put api/activity/{id}
     [HttpPut("{id:guid}")]
-    public ActionResult UpdateActivity(Guid id, UpdateActivityDTO activityDto)
+    public async Task<ActionResult> UpdateActivityAsync(Guid id, UpdateActivityDTO activityDto)
     {
-        var existingActivity = _repository.GetActivity(id);
+        var existingActivity = await _repository.GetActivityAsync(id);
 
         if (existingActivity is null)
         {
@@ -73,23 +74,24 @@ public class ActivitiesController : ControllerBase
             Time = activityDto.Time
         };
         
-        _repository.UpdateActivity(updatedActivity);
+        await _repository.UpdateActivityAsync(updatedActivity);
         
         return NoContent();
     }
 
     [HttpDelete("{id:guid}")]
-    public ActionResult DeleteActivity(Guid id)
+    public async Task<ActionResult> DeleteActivityAsync(Guid id)
     {
-        var existingActivity = _repository.GetActivity(id);
+        var existingActivity = await _repository.GetActivityAsync(id);
 
         if (existingActivity is null)
         {
             return NotFound();
         }
         
-        _repository.DeleteActivity(id);
+        await _repository.DeleteActivityAsync(id);
 
         return NoContent();
     }
+
 }

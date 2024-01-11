@@ -30,30 +30,33 @@ public class InMemActivitiesRepository : IActivitiesRepository
         }
     };
 
-    public IEnumerable<Activity> GetActivities()
+    public async Task<IEnumerable<Activity>> GetActivitiesAsync()
     {
-        return _activities;
+        return await Task.FromResult(_activities);
     }
 
-    public Activity GetActivity(Guid Id)
+    public async Task<Activity> GetActivityAsync(Guid Id)
     {
-        return _activities.SingleOrDefault(a => a.Id == Id);
+        return (await Task.FromResult(_activities.SingleOrDefault(a => a.Id == Id)))!;
     }
 
-    public void CreateActivity(Activity activity)
+    public async Task CreateActivityAsync(Activity activity)
     {
         _activities.Add(activity);
+        await Task.CompletedTask;
     }
 
-    public void UpdateActivity(Activity activity)
+    public async Task UpdateActivityAsync(Activity activity)
     {
         var index = _activities.FindIndex(existingActivity => existingActivity.Id == activity.Id);
         _activities[index] = activity;
+        await Task.CompletedTask;
     }
 
-    public void DeleteActivity(Guid id)
+    public async Task DeleteActivityAsync(Guid id)
     {
         var index = _activities.FindIndex(existingActivity => existingActivity.Id == id);
         _activities.RemoveAt(index);
+        await Task.CompletedTask;
     }
 }

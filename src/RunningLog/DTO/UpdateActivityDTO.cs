@@ -5,7 +5,7 @@ namespace RunningLog.DTO;
 public record UpdateActivityDTO
 {
     [Required]
-    public string Time { get; set; }
+    public string? Time { get; set; }
     
     [Required]
     [Range(0,1000)]
